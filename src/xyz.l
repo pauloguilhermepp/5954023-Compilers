@@ -22,6 +22,7 @@ extern int yyerror (char const *msg, ...);
 "!="                      { return NE; }
 ">="                      { return GE; }
 "<="                      { return LE; }
+"//".*\n                  { ; /* Ignore single-line comments */ }
 [\n"',:;=+*/%<>(){}!-]    { return yytext[0]; }
 [0-9]+                    { yylval.ival = atoi(yytext); return INT_LITERAL; }
 [0-9]+"."[0-9]*           { yylval.fval = atof(yytext); return FLOAT_LITERAL; }
