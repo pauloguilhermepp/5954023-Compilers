@@ -22,11 +22,11 @@ extern int yyerror (char const *msg, ...);
 "!="                      { return NE; }
 ">="                      { return GE; }
 "<="                      { return LE; }
-"//".*\n                  { ; /* Ignore single-line comments */ }
-[\n"',:;=+*/%<>(){}!-]    { return yytext[0]; }
+"//".*                    { ; /* Ignore */ }
+["',:;=+*/%<>(){}!-]      { return yytext[0]; }
 [0-9]+                    { yylval.ival = atoi(yytext); return INT_LITERAL; }
 [0-9]+"."[0-9]*           { yylval.fval = atof(yytext); return FLOAT_LITERAL; }
 [a-zA-Z][a-zA-Z0-9_]*     { yylval.sval = strdup(yytext); return IDENTIFIER; }
-[ \t\r]                   { ; /* ignore */ }
+[ \t\r\n]                 { ; /* ignore */ }
 .                         { yyerror("Unknown token %s\n", yytext); }
 %%
