@@ -1,0 +1,8 @@
+fn main() {
+        var i : i64 = 1;
+        var j : f64 = 2.0;
+        
+        printfSymbolTable();
+
+        return 0;
+}
