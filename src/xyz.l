@@ -13,6 +13,7 @@ extern int yyerror (char const *msg, ...);
 "if"                      { return IF; }
 "else"                    { return ELSE; }
 "while"                   { return WHILE; }
+"printfSymbolTable"       { return PST; }
 "var"                     { return VAR;}
 "i64"                     { return T_I64; }
 "f64"                     { return T_f64; }
