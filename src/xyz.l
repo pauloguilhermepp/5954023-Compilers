@@ -16,7 +16,7 @@ extern int yyerror (char const *msg, ...);
 "printfSymbolTable"       { return PST; }
 "var"                     { return VAR;}
 "i64"                     { return T_I64; }
-"f64"                     { return T_f64; }
+"f64"                     { return T_F64; }
 "&&"                      { return AND; }
 "||"                      { return OR; }
 "=="                      { return EQ; }
@@ -25,8 +25,8 @@ extern int yyerror (char const *msg, ...);
 "<="                      { return LE; }
 "//".*                    { ; /* Ignore */ }
 ["',:;=+*/%<>(){}!-]      { return yytext[0]; }
-[0-9]+                    { yylval.ival = atoi(yytext); return INT_LITERAL; }
-[0-9]+"."[0-9]*           { yylval.fval = atof(yytext); return FLOAT_LITERAL; }
+[0-9]+                    { yylval.val.ival = atoi(yytext); return INT_LITERAL; }
+[0-9]+"."[0-9]*           { yylval.val.fval = atof(yytext); return FLOAT_LITERAL; }
 [a-zA-Z][a-zA-Z0-9_]*     { yylval.sval = strdup(yytext); return IDENTIFIER; }
 [ \t\r\n]                 { ; /* ignore */ }
 .                         { yyerror("Unknown token %s\n", yytext); }

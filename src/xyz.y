@@ -6,13 +6,17 @@
 #define MAXTOKEN 64
 #define MAXSYMS 256
 
-struct symtab {
-        char id[MAXTOKEN];
-        float fval;
+union value_union {
         int ival;
+        double fval;
 };
 
-extern void assign(char *id, int ival);
+struct symtab {
+        char id[MAXTOKEN];
+        union value_union val;
+};
+
+extern void assign(char *id, union value_union ival);
 extern int yyerror (char const *msg, ...);
 extern int yylex();
 
@@ -20,24 +24,55 @@ static struct symtab symbols[MAXSYMS];
 static int nsyms = 0;
 
 int yydebug = 1;
+
+union value_union sum (union value_union x1, union value_union x2){
+        union value_union result;
+        result.ival = x1.ival + x2.ival;
+        result.fval = x1.fval + x2.fval;
+
+        return result;
+}
+
+union value_union sub (union value_union x1, union value_union x2){
+        union value_union result;
+        result.ival = x1.ival - x2.ival;
+        result.fval = x1.fval - x2.fval;
+
+        return result;
+}
+
+union value_union mult (union value_union x1, union value_union x2){
+        union value_union result;
+        result.ival = x1.ival * x2.ival;
+        result.fval = x1.fval * x2.fval;
+
+        return result;
+}
+
+union value_union divs (union value_union x1, union value_union x2){
+        union value_union result;
+        result.ival = x1.ival / x2.ival;
+        result.fval = x1.fval / x2.fval;
+
+        return result;
+}
 %}
 
 %union {
-        int ival;
-        float fval;
+        union value_union val;
         char *sval;
 }
 
 %token FN RETURN MAIN
 %token IF ELSE
 %token WHILE PST
-%token VAR T_I64 T_f64
+%token VAR T_I64 T_F64
 %token AND OR EQ NE GE LE
-%token <ival> INT_LITERAL
-%token <fval> FLOAT_LITERAL
+%token <val.ival> INT_LITERAL
+%token <val.fval> FLOAT_LITERAL
 %token <sval> IDENTIFIER
 
-%type  <ival> expr
+%type  <val> expr
 
 %left '+' '-'
 %left '*' '/'
@@ -59,19 +94,21 @@ assign_list     : assignment
                 ;
 
 assignment      : VAR IDENTIFIER ':' T_I64 '=' expr ';'         { assign($2, $6); }
+                | VAR IDENTIFIER ':' T_F64 '=' expr ';'         { assign($2, $6); }
                 | PST '(' ')' ';'                               {int i; 
                                                                 struct symtab *p; 
                                                                 for (i = 0; i < nsyms; i++) {
                                                                         p = &symbols[i];
-                                                                        printf("%s=%d\n", p->id, p->ival);
+                                                                        printf("%s = %d, %f\n", p->id, p->val.ival, p->val.fval);
                                                                 }}
                 ;
 
-expr            : expr '+' expr                 { $$ = $1 + $3; }
-                | expr '-' expr                 { $$ = $1 - $3; }
-                | expr '*' expr                 { $$ = $1 * $3; }
-                | expr '/' expr                 { $$ = $1 / $3; }
-                | INT_LITERAL                   { $$ = $1; }
+expr            : expr '+' expr                 { $$ = sum($1, $3); }
+                | expr '-' expr                 { $$ = sub($1, $3); }
+                | expr '*' expr                 { $$ = mult($1, $3); }
+                | expr '/' expr                 { $$ = divs($1, $3); }
+                | INT_LITERAL                   { $$.ival = $1; }
+                | FLOAT_LITERAL                 { $$.fval = $1; }
                 ;
 %%
 #include "xyz.yy.c"
@@ -99,22 +136,22 @@ static struct symtab *lookup(char *id) {
         return NULL;
 }
 
-static void install(char *id, int ival) {
+static void install(char *id, union value_union val) {
         struct symtab *p;
 
         p = &symbols[nsyms++];
         strncpy(p->id, id, MAXTOKEN);
-        p->ival = ival;
+        p->val = val;
 }
 
-void assign(char *id, int ival) {
+void assign(char *id, union value_union val) {
         struct symtab *p;
 
         p = lookup(id);
         if(p == NULL)
-                install(id, ival);
+                install(id, val);
         else
-                p->ival = ival;
+                p->val = val;
 }
 
 int main (int argc, char **argv) {
