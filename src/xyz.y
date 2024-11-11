@@ -46,20 +46,25 @@ int yydebug = 1;
 %start program
 
 %%
-program         : assign_list { return 0; }                  
+program         : function_list { return 0;}              
                 ;
 
+function_list   : function
+                | function function_list
+                ;
+function        : FN MAIN '(' ')' '{' assign_list RETURN INT_LITERAL ';' '}'
+                ;
 assign_list     : assignment
                 | assignment  assign_list
                 ;
 
-assignment      : IDENTIFIER '=' expr ';'       { assign($1, $3); }
-                | PST '(' ')' ';'               {int i; 
-                                                 struct symtab *p; 
-                                                 for (i = 0; i < nsyms; i++) {
-                                                         p = &symbols[i];
-                                                         printf("%s=%d\n", p->id, p->ival);
-                                                }}
+assignment      : VAR IDENTIFIER ':' T_I64 '=' expr ';'         { assign($2, $6); }
+                | PST '(' ')' ';'                               {int i; 
+                                                                struct symtab *p; 
+                                                                for (i = 0; i < nsyms; i++) {
+                                                                        p = &symbols[i];
+                                                                        printf("%s=%d\n", p->id, p->ival);
+                                                                }}
                 ;
 
 expr            : expr '+' expr                 { $$ = $1 + $3; }
