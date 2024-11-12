@@ -33,17 +33,28 @@ program         : function_list { return 0;}
 function_list   : function
                 | function function_list
                 ;
+
 function        : FN MAIN '(' ')' '{' statement_list RETURN INT_LITERAL ';' '}'
                 ;
+
 statement_list  : statement
                 | statement  statement_list
                 ;
-statement       : assignment
+
+statement       : VAR assignment_list
+                | printfSymbolTable
                 ;
-assignment      : VAR IDENTIFIER ':' T_I64 '=' expr ';'         { assign($2, $4, $6); }
-                | VAR IDENTIFIER ':' T_F64 '=' expr ';'         { assign($2, $4, $6); }
-                | PST '(' ')' ';'                               { printfSymbolTable(); }
+
+assignment_list : assignment ';'
+                | assignment ',' assignment_list
                 ;
+
+assignment      : IDENTIFIER ':' T_I64 '=' expr         { assign($1, $3, $5); }
+                | IDENTIFIER ':' T_F64 '=' expr         { assign($1, $3, $5); }
+                ;
+
+printfSymbolTable       : PST '(' ')' ';'               { printfSymbolTable(); }
+                        ;
 
 expr            : expr '+' expr                 { $$ = sum($1, $3); }
                 | expr '-' expr                 { $$ = sub($1, $3); }
