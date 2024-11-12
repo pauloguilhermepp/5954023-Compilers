@@ -4,6 +4,7 @@
 
 %union {
         struct typed_value tval;
+        enum type_enum typ;
         char *sval;
 }
 
@@ -12,7 +13,7 @@
 %token WHILE PST
 %token VAR
 %token AND OR EQ NE GE LE
-%token <sval> T_I64 T_F64
+%token <typ> T_I64 T_F64
 %token <tval.val.ival> INT_LITERAL
 %token <tval.val.fval> FLOAT_LITERAL
 %token <sval> IDENTIFIER
@@ -76,33 +77,35 @@ struct symtab *lookup(char *id) {
         return NULL;
 }
 
-static void install(char *id, char *targTyp, struct typed_value tval) {
+static void install(char *id, enum type_enum targTyp, struct typed_value tval) {
         struct symtab *p;
 
         p = &symbols[nsyms++];
         strncpy(p->id, id, MAXTOKEN);
 
-        if (strncmp(targTyp, "I64", 3) == 0 && tval.typ == F64) {
+        if (targTyp == I64 && tval.typ == F64) {
                 p->tval.typ = I64;
                 p->tval.val.ival = tval.val.fval;
-        }else if (strncmp(targTyp, "F64", 3) == 0 && tval.typ == I64 ) {
+        }else if (targTyp == F64 && tval.typ == I64 ) {
                 p->tval.typ = F64;
                 p->tval.val.fval = tval.val.ival;
+        }else {
+                p->tval = tval;
         }
 }
 
-void assign(char *id, char *targTyp, struct typed_value tval) {
+void assign(char *id, enum type_enum targTyp, struct typed_value tval) {
         struct symtab *p;
 
         p = lookup(id);
         if(p == NULL){
                 install(id, targTyp, tval);
         }else {
-                if (strncmp(targTyp, "I64", 3) == 0 && tval.typ == F64 ) {
+                if (targTyp == I64 && tval.typ == F64 ) {
                         p->tval.val.ival = tval.val.fval;
-                }else if (strncmp(targTyp, "F64", 3) == 0 && tval.typ == I64 ) {
+                }else if (targTyp == F64 == 0 && tval.typ == I64 ) {
                         p->tval.val.fval = tval.val.ival;
-                }else{
+                }else {
                         p->tval = tval;
                 }
         }

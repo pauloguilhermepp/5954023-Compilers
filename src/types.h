@@ -23,7 +23,7 @@ struct symtab {
         struct typed_value tval;
 };
 
-extern void assign(char *id, char *targTyp, struct typed_value tval);
+extern void assign(char *id, enum type_enum targTyp, struct typed_value tval);
 extern int yyerror (char const *msg, ...);
 extern int yylex();
 

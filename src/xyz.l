@@ -1,6 +1,7 @@
 %{
 #include <stdlib.h>
 #include "xyz.tab.h" 
+#include "types.h"
 
 extern int yyerror (char const *msg, ...);
 %}
@@ -15,8 +16,8 @@ extern int yyerror (char const *msg, ...);
 "while"                   { return WHILE; }
 "printfSymbolTable"       { return PST; }
 "var"                     { return VAR;}
-"i64"                     { yylval.sval = "I64"; return T_I64; }
-"f64"                     { yylval.sval = "F64"; return T_F64; }
+"i64"                     { yylval.typ = I64; return T_I64; }
+"f64"                     { yylval.typ = F64; return T_F64; }
 "&&"                      { return AND; }
 "||"                      { return OR; }
 "=="                      { return EQ; }
