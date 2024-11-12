@@ -41,13 +41,16 @@ statement_list  : statement
                 | statement  statement_list
                 ;
 
-statement       : VAR assignment_list
+statement       : assignment_list
                 | printfSymbolTable
                 ;
 
-assignment_list : assignment ';'
-                | assignment ',' assignment_list
+assignment_list : VAR variable_assignment_list
                 ;
+
+variable_assignment_list        : assignment ';'
+                                | assignment ',' variable_assignment_list
+                                ;
 
 assignment      : IDENTIFIER ':' T_I64 '=' expr         { assign($1, $3, $5); }
                 | IDENTIFIER ':' T_F64 '=' expr         { assign($1, $3, $5); }
