@@ -1,0 +1,13 @@
+fn main() {
+        var 
+            x1 : i64 = 1 + 1,
+            x2 : f64 = 0.9 + 0.9;
+        
+        if ( x1 ) {
+            var x3 : i64 = 1;
+        }
+        
+        printfSymbolTable();
+
+        return 0;
+}
