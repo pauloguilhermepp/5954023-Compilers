@@ -6,17 +6,26 @@
 #define MAXTOKEN 64
 #define MAXSYMS 256
 
+enum type_enum {
+        I64, F64
+};
+
 union value_union {
         int ival;
         double fval;
 };
 
-struct symtab {
-        char id[MAXTOKEN];
+struct typed_value {
+        enum type_enum typ;
         union value_union val;
 };
 
-extern void assign(char *id, union value_union ival);
+struct symtab {
+        char id[MAXTOKEN];
+        struct typed_value tval;
+};
+
+extern void assign(char *id, char *targTyp, struct typed_value tval);
 extern int yyerror (char const *msg, ...);
 extern int yylex();
 
@@ -25,54 +34,107 @@ static int nsyms = 0;
 
 int yydebug = 1;
 
-union value_union sum (union value_union x1, union value_union x2){
-        union value_union result;
-        result.ival = x1.ival + x2.ival;
-        result.fval = x1.fval + x2.fval;
-
-        return result;
+struct typed_value sum (struct typed_value tval1, struct typed_value tval2){
+        struct typed_value result;
+        if (tval1.typ == I64 && tval2.typ == I64){
+                result.typ = I64;
+                result.val.ival = tval1.val.ival + tval2.val.ival;
+                return result;
+        }else if (tval1.typ == I64 && tval2.typ == F64){
+                result.typ = F64;
+                result.val.fval = tval1.val.ival + tval2.val.fval;
+                return result;
+        }else if (tval1.typ == F64 && tval2.typ == I64){
+                result.typ = F64;
+                result.val.fval = tval1.val.fval + tval2.val.ival;
+                return result;
+        }else {
+                result.typ = F64;
+                result.val.fval = tval1.val.fval + tval2.val.fval;
+                return result;
+        }
 }
 
-union value_union sub (union value_union x1, union value_union x2){
-        union value_union result;
-        result.ival = x1.ival - x2.ival;
-        result.fval = x1.fval - x2.fval;
-
-        return result;
+struct typed_value sub (struct typed_value tval1, struct typed_value tval2){
+        struct typed_value result;
+        if (tval1.typ == I64 && tval2.typ == I64){
+                result.typ = I64;
+                result.val.ival = tval1.val.ival - tval2.val.ival;
+                return result;
+        }else if (tval1.typ == I64 && tval2.typ == F64){
+                result.typ = F64;
+                result.val.fval = tval1.val.ival - tval2.val.fval;
+                return result;
+        }else if (tval1.typ == F64 && tval2.typ == I64){
+                result.typ = F64;
+                result.val.fval = tval1.val.fval - tval2.val.ival;
+                return result;
+        }else {
+                result.typ = F64;
+                result.val.fval = tval1.val.fval - tval2.val.fval;
+                return result;
+        }
 }
 
-union value_union mult (union value_union x1, union value_union x2){
-        union value_union result;
-        result.ival = x1.ival * x2.ival;
-        result.fval = x1.fval * x2.fval;
-
-        return result;
+struct typed_value mult (struct typed_value tval1, struct typed_value tval2){
+        struct typed_value result;
+        if (tval1.typ == I64 && tval2.typ == I64){
+                result.typ = I64;
+                result.val.ival = tval1.val.ival * tval2.val.ival;
+                return result;
+        }else if (tval1.typ == I64 && tval2.typ == F64){
+                result.typ = F64;
+                result.val.fval = tval1.val.ival * tval2.val.fval;
+                return result;
+        }else if (tval1.typ == F64 && tval2.typ == I64){
+                result.typ = F64;
+                result.val.fval = tval1.val.fval * tval2.val.ival;
+                return result;
+        }else {
+                result.typ = F64;
+                result.val.fval = tval1.val.fval * tval2.val.fval;
+                return result;
+        }
 }
 
-union value_union divs (union value_union x1, union value_union x2){
-        union value_union result;
-        result.ival = x1.ival / x2.ival;
-        result.fval = x1.fval / x2.fval;
-
-        return result;
+struct typed_value divs (struct typed_value tval1, struct typed_value tval2){
+        struct typed_value result;
+        if (tval1.typ == I64 && tval2.typ == I64){
+                result.typ = I64;
+                result.val.ival = tval1.val.ival / tval2.val.ival;
+                return result;
+        }else if (tval1.typ == I64 && tval2.typ == F64){
+                result.typ = F64;
+                result.val.fval = tval1.val.ival / tval2.val.fval;
+                return result;
+        }else if (tval1.typ == F64 && tval2.typ == I64){
+                result.typ = F64;
+                result.val.fval = tval1.val.fval / tval2.val.ival;
+                return result;
+        }else {
+                result.typ = F64;
+                result.val.fval = tval1.val.fval / tval2.val.fval;
+                return result;
+        }
 }
 %}
 
 %union {
-        union value_union val;
+        struct typed_value tval;
         char *sval;
 }
 
 %token FN RETURN MAIN
 %token IF ELSE
 %token WHILE PST
-%token VAR T_I64 T_F64
+%token VAR
 %token AND OR EQ NE GE LE
-%token <val.ival> INT_LITERAL
-%token <val.fval> FLOAT_LITERAL
+%token <sval> T_I64 T_F64
+%token <tval.val.ival> INT_LITERAL
+%token <tval.val.fval> FLOAT_LITERAL
 %token <sval> IDENTIFIER
 
-%type  <val> expr
+%type  <tval> expr
 
 %left '+' '-'
 %left '*' '/'
@@ -93,13 +155,13 @@ assign_list     : assignment
                 | assignment  assign_list
                 ;
 
-assignment      : VAR IDENTIFIER ':' T_I64 '=' expr ';'         { assign($2, $6); }
-                | VAR IDENTIFIER ':' T_F64 '=' expr ';'         { assign($2, $6); }
+assignment      : VAR IDENTIFIER ':' T_I64 '=' expr ';'         { assign($2, $4, $6); }
+                | VAR IDENTIFIER ':' T_F64 '=' expr ';'         { assign($2, $4, $6); }
                 | PST '(' ')' ';'                               {int i; 
                                                                 struct symtab *p; 
                                                                 for (i = 0; i < nsyms; i++) {
                                                                         p = &symbols[i];
-                                                                        printf("%s = %d, %f\n", p->id, p->val.ival, p->val.fval);
+                                                                        printf("%s = %d, %f\n", p->id, p->tval.val.ival, p->tval.val.fval);
                                                                 }}
                 ;
 
@@ -107,8 +169,8 @@ expr            : expr '+' expr                 { $$ = sum($1, $3); }
                 | expr '-' expr                 { $$ = sub($1, $3); }
                 | expr '*' expr                 { $$ = mult($1, $3); }
                 | expr '/' expr                 { $$ = divs($1, $3); }
-                | INT_LITERAL                   { $$.ival = $1; }
-                | FLOAT_LITERAL                 { $$.fval = $1; }
+                | INT_LITERAL                   { $$.val.ival = $1; $$.typ = I64;}
+                | FLOAT_LITERAL                 { $$.val.fval = $1; $$.typ = F64;}
                 ;
 %%
 #include "xyz.yy.c"
@@ -123,7 +185,7 @@ int yyerror(const char *msg, ...) {
 	exit(EXIT_FAILURE);
 }
 
-static struct symtab *lookup(char *id) {
+struct symtab *lookup(char *id) {
         int i;
         struct symtab *p;
 
@@ -136,22 +198,36 @@ static struct symtab *lookup(char *id) {
         return NULL;
 }
 
-static void install(char *id, union value_union val) {
+static void install(char *id, char *targTyp, struct typed_value tval) {
         struct symtab *p;
 
         p = &symbols[nsyms++];
         strncpy(p->id, id, MAXTOKEN);
-        p->val = val;
+
+        if (strncmp(targTyp, "I64", 3) == 0 && tval.typ == F64) {
+                p->tval.typ = I64;
+                p->tval.val.ival = tval.val.fval;
+        }else if (strncmp(targTyp, "F64", 3) == 0 && tval.typ == I64 ) {
+                p->tval.typ = F64;
+                p->tval.val.fval = tval.val.ival;
+        }
 }
 
-void assign(char *id, union value_union val) {
+void assign(char *id, char *targTyp, struct typed_value tval) {
         struct symtab *p;
 
         p = lookup(id);
-        if(p == NULL)
-                install(id, val);
-        else
-                p->val = val;
+        if(p == NULL){
+                install(id, targTyp, tval);
+        }else {
+                if (strncmp(targTyp, "I64", 3) == 0 && tval.typ == F64 ) {
+                        p->tval.val.ival = tval.val.fval;
+                }else if (strncmp(targTyp, "F64", 3) == 0 && tval.typ == I64 ) {
+                        p->tval.val.fval = tval.val.ival;
+                }else{
+                        p->tval = tval;
+                }
+        }
 }
 
 int main (int argc, char **argv) {
