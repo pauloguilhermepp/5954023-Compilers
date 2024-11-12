@@ -57,8 +57,17 @@ assignment      : IDENTIFIER ':' T_I64 '=' expr         { assign($1, $3, $5); }
                 | IDENTIFIER ':' T_F64 '=' expr         { assign($1, $3, $5); }
                 ;
 
-conditional_statement   : IF '(' expr ')' '{' statement_list '}'
+conditional_statement   : IF '(' expr ')' '{' statement_list '}' else_statement_list
                         ;
+
+else_statement_list     : /*epsilon*/ 
+                        |ELSE IF '(' expr ')' '{' statement_list '}' else_statement_list
+                        | single_else_statement
+                        ;
+
+single_else_statement   : ELSE '{' statement_list '}'
+                        ;
+
 printfSymbolTable       : PST '(' ')' ';'               { printfSymbolTable(); }
                         ;
 
