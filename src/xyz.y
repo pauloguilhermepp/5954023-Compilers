@@ -33,12 +33,13 @@ program         : function_list { return 0;}
 function_list   : function
                 | function function_list
                 ;
-function        : FN MAIN '(' ')' '{' assign_list RETURN INT_LITERAL ';' '}'
+function        : FN MAIN '(' ')' '{' statement_list RETURN INT_LITERAL ';' '}'
                 ;
-assign_list     : assignment
-                | assignment  assign_list
+statement_list  : statement
+                | statement  statement_list
                 ;
-
+statement       : assignment
+                ;
 assignment      : VAR IDENTIFIER ':' T_I64 '=' expr ';'         { assign($2, $4, $6); }
                 | VAR IDENTIFIER ':' T_F64 '=' expr ';'         { assign($2, $4, $6); }
                 | PST '(' ')' ';'                               { printfSymbolTable(); }
