@@ -27,4 +27,6 @@ extern void assign(char *id, enum type_enum targTyp, struct typed_value tval);
 extern int yyerror (char const *msg, ...);
 extern int yylex();
 
+extern struct symtab *lookup(char *id);
+
 #endif

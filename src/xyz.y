@@ -42,6 +42,7 @@ statement_list  : statement
                 ;
 
 statement       : assignment_list
+                | conditional_statement
                 | printfSymbolTable
                 ;
 
@@ -56,6 +57,8 @@ assignment      : IDENTIFIER ':' T_I64 '=' expr         { assign($1, $3, $5); }
                 | IDENTIFIER ':' T_F64 '=' expr         { assign($1, $3, $5); }
                 ;
 
+conditional_statement   : IF '(' expr ')' '{' statement_list '}'
+                        ;
 printfSymbolTable       : PST '(' ')' ';'               { printfSymbolTable(); }
                         ;
 
@@ -65,6 +68,7 @@ expr            : expr '+' expr                 { $$ = sum($1, $3); }
                 | expr '/' expr                 { $$ = divs($1, $3); }
                 | INT_LITERAL                   { $$.val.ival = $1; $$.typ = I64;}
                 | FLOAT_LITERAL                 { $$.val.fval = $1; $$.typ = F64;}
+                | IDENTIFIER                    { struct symtab *p; p = lookup($1); $$ = p->tval;}
                 ;
 %%
 #include "xyz.yy.c"
