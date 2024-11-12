@@ -1,0 +1,12 @@
+fn main() {
+        var 
+            init : i64 = 0,
+            final : i64 = 100;
+        
+        while (init < final) {
+            var sum : i64 = 0;
+        }
+        printfSymbolTable();
+
+        return 0;
+}

@@ -20,6 +20,10 @@
 
 %type  <tval> expr
 
+%left OR
+%left AND
+%nonassoc EQ NE
+%nonassoc '<' '>' GE LE
 %left '+' '-'
 %left '*' '/'
 %right '='
@@ -43,6 +47,7 @@ statement_list  : statement
 
 statement       : assignment_list
                 | conditional_statement
+                | loop_statement
                 | printfSymbolTable
                 ;
 
@@ -61,11 +66,14 @@ conditional_statement   : IF '(' expr ')' '{' statement_list '}' else_statement_
                         ;
 
 else_statement_list     : /*epsilon*/ 
-                        |ELSE IF '(' expr ')' '{' statement_list '}' else_statement_list
+                        | ELSE IF '(' expr ')' '{' statement_list '}' else_statement_list
                         | single_else_statement
                         ;
 
 single_else_statement   : ELSE '{' statement_list '}'
+                        ;
+
+loop_statement          : WHILE '(' expr ')' '{' statement_list '}'
                         ;
 
 printfSymbolTable       : PST '(' ')' ';'               { printfSymbolTable(); }
@@ -75,6 +83,14 @@ expr            : expr '+' expr                 { $$ = sum($1, $3); }
                 | expr '-' expr                 { $$ = sub($1, $3); }
                 | expr '*' expr                 { $$ = mult($1, $3); }
                 | expr '/' expr                 { $$ = divs($1, $3); }
+                | expr AND expr                 { $$.val.ival = 0; $$.typ = I64;}
+                | expr OR  expr                 { $$.val.ival = 0; $$.typ = I64;}
+                | expr EQ  expr                 { $$.val.ival = 0; $$.typ = I64;}
+                | expr NE  expr                 { $$.val.ival = 0; $$.typ = I64;}
+                | expr GE  expr                 { $$.val.ival = 0; $$.typ = I64;}
+                | expr LE  expr                 { $$.val.ival = 0; $$.typ = I64;}
+                | expr '>' expr                 { $$.val.ival = 0; $$.typ = I64;}
+                | expr '<' expr                 { $$.val.ival = 0; $$.typ = I64;}
                 | INT_LITERAL                   { $$.val.ival = $1; $$.typ = I64;}
                 | FLOAT_LITERAL                 { $$.val.fval = $1; $$.typ = F64;}
                 | IDENTIFIER                    { struct symtab *p; p = lookup($1); $$ = p->tval;}
