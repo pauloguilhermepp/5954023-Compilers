@@ -1,5 +1,6 @@
 %{
 #include "standard.h"
+#include "stack.h"
 %}
 
 %union {
