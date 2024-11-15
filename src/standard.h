@@ -3,10 +3,50 @@
 #include <stdlib.h>
 #include "types.h"
 
-static struct symtab symbols[MAXSYMS];
-static int nsyms = 0;
+int yyerror(const char *msg, ...) {
+	va_list args;
 
-int yydebug = 1;
+	va_start(args, msg);
+	vfprintf(stderr, msg, args);
+	va_end(args);
+
+	exit(EXIT_FAILURE);
+}
+
+struct symtab *lookup(char *varName) {
+        char *id = getStack(&scopeStack);
+        struct symtab *p;
+
+        strcat(id, varName);
+
+        for (int i = 0; i < nsyms; i++) {
+                p = &symbols[i];
+                if (strncmp(p->id, id, MAXTOKEN) == 0)
+                        return p;
+        }
+
+        return NULL;
+}
+
+static void install(char *varName, enum type_enum targTyp) {
+        struct symtab *p;
+        char *id = getStack(&scopeStack);
+
+        strcat(id, varName);
+
+        p = &symbols[nsyms++];
+        p->typ = targTyp;
+        strncpy(p->id, id, MAXTOKEN);
+}
+
+void assign(char *varName, enum type_enum targTyp) {
+        struct symtab *p;
+
+        p = lookup(varName);
+        if(p == NULL){
+                install(varName, targTyp);
+        }
+}
 
 void printfSymbolTable() {
     struct symtab *p;

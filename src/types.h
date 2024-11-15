@@ -1,6 +1,8 @@
 #ifndef __XYZ_TYPES_H__
 #define __XYZ_TYPES_H__
 
+#include "stack.h"
+
 #define MAXTOKEN 64
 #define MAXSYMS 256
 
@@ -13,10 +15,11 @@ struct symtab {
         enum type_enum typ;
 };
 
-extern void assign(char *id, enum type_enum targTyp);
-extern int yyerror (char const *msg, ...);
+Stack scopeStack = {.top = -1};
+
+int yydebug = 1;
+static int nsyms = 0;
+static struct symtab symbols[MAXSYMS];
+
 extern int yylex();
-
-extern struct symtab *lookup(char *varName);
-
 #endif
