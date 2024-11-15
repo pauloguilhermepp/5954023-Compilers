@@ -20,6 +20,7 @@ struct typed_value {
 
 struct symtab {
         char id[MAXTOKEN];
+        char scope[MAXTOKEN];
         struct typed_value tval;
 };
 

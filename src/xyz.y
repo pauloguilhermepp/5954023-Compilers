@@ -1,6 +1,8 @@
 %{
 #include "standard.h"
 #include "stack.h"
+
+Stack scopeStack = {.top = -1};
 %}
 
 %union {
@@ -39,7 +41,12 @@ function_list   : function
                 | function function_list
                 ;
 
-function        : FN MAIN '(' ')' '{' statement_list RETURN INT_LITERAL ';' '}'
+function        : FN IDENTIFIER '(' ')' '{' { 
+                      push(&scopeStack, $2);; 
+                  } 
+                  statement_list RETURN INT_LITERAL ';' '}' { 
+                      pop(&scopeStack); 
+                  }
                 ;
 
 statement_list  : statement
@@ -124,9 +131,11 @@ struct symtab *lookup(char *id) {
 
 static void install(char *id, enum type_enum targTyp, struct typed_value tval) {
         struct symtab *p;
+        char *scope = getStack(&scopeStack);
 
         p = &symbols[nsyms++];
         strncpy(p->id, id, MAXTOKEN);
+        strncpy(p->scope, scope, MAXTOKEN);
 
         if (targTyp == I64 && tval.typ == F64) {
                 p->tval.typ = I64;

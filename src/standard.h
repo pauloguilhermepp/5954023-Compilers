@@ -98,9 +98,9 @@ void printfSymbolTable() {
     for (int i = 0; i < nsyms; i++) {
             p = &symbols[i];
             if (p->tval.typ == I64){
-                printf("%s = %d [I64]\n", p->id, p->tval.val.ival);
+                printf("%s.%s = %d [I64]\n", p->scope, p->id, p->tval.val.ival);
             }else {
-                printf("%s = %f [F64]\n", p->id, p->tval.val.fval);
+                printf("%s.%s = %f [F64]\n", p->scope, p->id, p->tval.val.fval);
             }
     }
 }
