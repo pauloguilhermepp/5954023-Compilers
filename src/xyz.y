@@ -12,7 +12,7 @@ Stack scopeStack = {.top = -1};
 
 %token FN RETURN
 %token IF ELSE
-%token WHILE PST
+%token WHILE
 %token VAR
 %token AND OR EQ NE GE LE
 %token INT_LITERAL
@@ -62,7 +62,6 @@ statement_list  : statement
 statement       : assignment_list
                 | conditional_statement
                 | loop_statement
-                | printfSymbolTable
                 ;
 
 assignment_list : VAR variable_assignment_list
@@ -91,9 +90,6 @@ single_else_statement   : ELSE '{' statement_list '}'
                         ;
 
 loop_statement          : WHILE '(' expr ')' '{' statement_list '}'
-                        ;
-
-printfSymbolTable       : PST '(' ')' ';'               { printfSymbolTable(); }
                         ;
 
 expr            : expr '+' expr
@@ -173,6 +169,8 @@ int main (int argc, char **argv) {
     do {
         yyparse();
     } while(!feof(yyin));
+
+    printfSymbolTable();
 
     return EXIT_SUCCESS;
 }

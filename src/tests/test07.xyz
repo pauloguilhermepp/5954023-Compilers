@@ -8,8 +8,6 @@ fn main() {
         } else {
             var x4 : i64 = 1;
         }
-        
-        printfSymbolTable();
 
         return 0;
 }

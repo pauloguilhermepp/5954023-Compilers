@@ -1,7 +1,5 @@
 fn main() {
         var i : i64 = 1;
         
-        printfSymbolTable();
-
         return 0;
 }

@@ -10,8 +10,6 @@ fn main() {
         } else {
             var x5 : i64 = 1;
         }
-        
-        printfSymbolTable();
 
         return 0;
 }

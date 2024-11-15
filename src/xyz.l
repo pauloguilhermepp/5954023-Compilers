@@ -14,7 +14,6 @@ extern int yyerror (char const *msg, ...);
 "if"                      { return IF; }
 "else"                    { return ELSE; }
 "while"                   { return WHILE; }
-"printfSymbolTable"       { return PST; }
 "var"                     { return VAR;}
 "i64"                     { yylval.typ = I64; return T_I64; }
 "f64"                     { yylval.typ = F64; return T_F64; }

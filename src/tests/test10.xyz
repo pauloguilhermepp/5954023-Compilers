@@ -6,7 +6,5 @@ fn simpleFunc() {
 fn main() {
         var x : i64 = 1;
 
-        printfSymbolTable();
-
         return 0;
 }

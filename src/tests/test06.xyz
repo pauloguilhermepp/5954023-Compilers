@@ -7,7 +7,5 @@ fn main() {
             var x3 : i64 = 1;
         }
         
-        printfSymbolTable();
-
         return 0;
 }

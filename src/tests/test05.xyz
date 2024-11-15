@@ -6,7 +6,5 @@ fn main() {
             x4 : f64 = 0.9 + 0.9,
             x5 : f64 = 1 + x4;
         
-        printfSymbolTable();
-
         return 0;
 }
