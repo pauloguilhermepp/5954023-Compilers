@@ -11,7 +11,7 @@ Stack scopeStack = {.top = -1};
         char *sval;
 }
 
-%token FN RETURN MAIN
+%token FN RETURN
 %token IF ELSE
 %token WHILE PST
 %token VAR
@@ -19,7 +19,7 @@ Stack scopeStack = {.top = -1};
 %token <typ> T_I64 T_F64
 %token <tval.val.ival> INT_LITERAL
 %token <tval.val.fval> FLOAT_LITERAL
-%token <sval> IDENTIFIER
+%token <sval> MAIN IDENTIFIER
 
 %type  <tval> expr
 
@@ -41,13 +41,12 @@ function_list   : function
                 | function function_list
                 ;
 
-function        : FN IDENTIFIER '(' ')' '{' { 
-                      push(&scopeStack, $2);; 
-                  } 
-                  statement_list RETURN INT_LITERAL ';' '}' { 
-                      pop(&scopeStack); 
-                  }
+function        : FN function_declaration '{' statement_list RETURN INT_LITERAL ';' '}' { pop(&scopeStack); }
                 ;
+
+function_declaration    : MAIN '(' ')'          { push(&scopeStack, $1); }
+                        | IDENTIFIER '(' ')'    { push(&scopeStack, $1); }
+                        ;
 
 statement_list  : statement
                 | statement  statement_list
@@ -116,11 +115,13 @@ int yyerror(const char *msg, ...) {
 	exit(EXIT_FAILURE);
 }
 
-struct symtab *lookup(char *id) {
-        int i;
+struct symtab *lookup(char *varName) {
+        char *id = getStack(&scopeStack);
         struct symtab *p;
 
-        for (i = 0; i < nsyms; i++) {
+        strcat(id, varName);
+
+        for (int i = 0; i < nsyms; i++) {
                 p = &symbols[i];
                 if (strncmp(p->id, id, MAXTOKEN) == 0)
                         return p;
@@ -129,13 +130,14 @@ struct symtab *lookup(char *id) {
         return NULL;
 }
 
-static void install(char *id, enum type_enum targTyp, struct typed_value tval) {
+static void install(char *varName, enum type_enum targTyp, struct typed_value tval) {
         struct symtab *p;
-        char *scope = getStack(&scopeStack);
+        char *id = getStack(&scopeStack);
+
+        strcat(id, varName);
 
         p = &symbols[nsyms++];
         strncpy(p->id, id, MAXTOKEN);
-        strncpy(p->scope, scope, MAXTOKEN);
 
         if (targTyp == I64 && tval.typ == F64) {
                 p->tval.typ = I64;
@@ -148,12 +150,12 @@ static void install(char *id, enum type_enum targTyp, struct typed_value tval) {
         }
 }
 
-void assign(char *id, enum type_enum targTyp, struct typed_value tval) {
+void assign(char *varName, enum type_enum targTyp, struct typed_value tval) {
         struct symtab *p;
 
-        p = lookup(id);
+        p = lookup(varName);
         if(p == NULL){
-                install(id, targTyp, tval);
+                install(varName, targTyp, tval);
         }else {
                 if (targTyp == I64 && tval.typ == F64 ) {
                         p->tval.val.ival = tval.val.fval;

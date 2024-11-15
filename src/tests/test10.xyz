@@ -1,0 +1,12 @@
+fn simpleFunc() {
+        var x : i64 = 0;
+        return 0;
+}
+
+fn main() {
+        var x : i64 = 1;
+
+        printfSymbolTable();
+
+        return 0;
+}

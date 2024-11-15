@@ -10,6 +10,7 @@ extern int yyerror (char const *msg, ...);
 %%
 "fn"                      { return FN; }
 "return"                  { return RETURN; }
+"main"                    { yylval.sval = strdup(yytext); return MAIN; }
 "if"                      { return IF; }
 "else"                    { return ELSE; }
 "while"                   { return WHILE; }

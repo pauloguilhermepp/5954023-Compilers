@@ -43,7 +43,7 @@ char *getStack(Stack *s) {
     result[0] = '\0';
     for (int i = 0; i <= s->top; i++) {
         strcat(result, s->elements[i]);
-        if (i < s->top) {
+        if (i <= s->top) {
             strcat(result, ".");
         }
     }
