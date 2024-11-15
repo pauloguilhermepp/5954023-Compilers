@@ -21,6 +21,7 @@ Stack scopeStack = {.top = -1};
 %token <tval.val.fval> FLOAT_LITERAL
 %token <sval> MAIN IDENTIFIER
 
+%type  <typ> type
 %type  <tval> expr
 
 %left OR
@@ -41,11 +42,19 @@ function_list   : function
                 | function function_list
                 ;
 
-function        : FN function_declaration '{' statement_list RETURN INT_LITERAL ';' '}' { pop(&scopeStack); }
+function        : FN function_declaration '{' statement_list RETURN expr ';' '}' { pop(&scopeStack); }
                 ;
 
-function_declaration    : MAIN '(' ')'          { push(&scopeStack, $1); }
-                        | IDENTIFIER '(' ')'    { push(&scopeStack, $1); }
+function_declaration    : MAIN '(' ')'                                  { push(&scopeStack, $1); }
+                        | IDENTIFIER '(' function_attributes ')'        { push(&scopeStack, $1); }
+                        ;
+
+function_attributes     : /*epsilon*/ 
+                        | identifier_list
+                        ;
+
+identifier_list         : IDENTIFIER type                       { struct symtab *p; assign($1, $2, p->tval); }
+                        | IDENTIFIER type ',' identifier_list   { struct symtab *p; assign($1, $2, p->tval); }
                         ;
 
 statement_list  : statement
@@ -65,9 +74,12 @@ variable_assignment_list        : assignment ';'
                                 | assignment ',' variable_assignment_list
                                 ;
 
-assignment      : IDENTIFIER ':' T_I64 '=' expr         { assign($1, $3, $5); }
-                | IDENTIFIER ':' T_F64 '=' expr         { assign($1, $3, $5); }
+assignment      : IDENTIFIER ':' type '=' expr         { assign($1, $3, $5); }
                 ;
+
+type    : T_I64
+        | T_F64
+        ;
 
 conditional_statement   : IF '(' expr ')' '{' statement_list '}' else_statement_list
                         ;
