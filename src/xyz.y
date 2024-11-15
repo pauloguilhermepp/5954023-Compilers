@@ -6,7 +6,6 @@ Stack scopeStack = {.top = -1};
 %}
 
 %union {
-        struct typed_value tval;
         enum type_enum typ;
         char *sval;
 }
@@ -16,13 +15,12 @@ Stack scopeStack = {.top = -1};
 %token WHILE PST
 %token VAR
 %token AND OR EQ NE GE LE
+%token INT_LITERAL
+%token FLOAT_LITERAL
 %token <typ> T_I64 T_F64
-%token <tval.val.ival> INT_LITERAL
-%token <tval.val.fval> FLOAT_LITERAL
 %token <sval> MAIN IDENTIFIER
 
 %type  <typ> type
-%type  <tval> expr
 
 %left OR
 %left AND
@@ -53,8 +51,8 @@ function_attributes     : /*epsilon*/
                         | identifier_list
                         ;
 
-identifier_list         : IDENTIFIER type                       { struct symtab *p; assign($1, $2, p->tval); }
-                        | IDENTIFIER type ',' identifier_list   { struct symtab *p; assign($1, $2, p->tval); }
+identifier_list         : IDENTIFIER type                       { struct symtab *p; assign($1, $2); }
+                        | IDENTIFIER type ',' identifier_list   { struct symtab *p; assign($1, $2); }
                         ;
 
 statement_list  : statement
@@ -74,7 +72,7 @@ variable_assignment_list        : assignment ';'
                                 | assignment ',' variable_assignment_list
                                 ;
 
-assignment      : IDENTIFIER ':' type '=' expr         { assign($1, $3, $5); }
+assignment      : IDENTIFIER ':' type '=' expr         { assign($1, $3); }
                 ;
 
 type    : T_I64
@@ -98,21 +96,21 @@ loop_statement          : WHILE '(' expr ')' '{' statement_list '}'
 printfSymbolTable       : PST '(' ')' ';'               { printfSymbolTable(); }
                         ;
 
-expr            : expr '+' expr                 { $$ = sum($1, $3); }
-                | expr '-' expr                 { $$ = sub($1, $3); }
-                | expr '*' expr                 { $$ = mult($1, $3); }
-                | expr '/' expr                 { $$ = divs($1, $3); }
-                | expr AND expr                 { $$.val.ival = 0; $$.typ = I64;}
-                | expr OR  expr                 { $$.val.ival = 0; $$.typ = I64;}
-                | expr EQ  expr                 { $$.val.ival = 0; $$.typ = I64;}
-                | expr NE  expr                 { $$.val.ival = 0; $$.typ = I64;}
-                | expr GE  expr                 { $$.val.ival = 0; $$.typ = I64;}
-                | expr LE  expr                 { $$.val.ival = 0; $$.typ = I64;}
-                | expr '>' expr                 { $$.val.ival = 0; $$.typ = I64;}
-                | expr '<' expr                 { $$.val.ival = 0; $$.typ = I64;}
-                | INT_LITERAL                   { $$.val.ival = $1; $$.typ = I64;}
-                | FLOAT_LITERAL                 { $$.val.fval = $1; $$.typ = F64;}
-                | IDENTIFIER                    { struct symtab *p; p = lookup($1); $$ = p->tval;}
+expr            : expr '+' expr
+                | expr '-' expr
+                | expr '*' expr
+                | expr '/' expr
+                | expr AND expr
+                | expr OR  expr
+                | expr EQ  expr
+                | expr NE  expr
+                | expr GE  expr
+                | expr LE  expr
+                | expr '>' expr
+                | expr '<' expr
+                | INT_LITERAL
+                | FLOAT_LITERAL
+                | IDENTIFIER
                 ;
 %%
 #include "xyz.yy.c"
@@ -142,40 +140,23 @@ struct symtab *lookup(char *varName) {
         return NULL;
 }
 
-static void install(char *varName, enum type_enum targTyp, struct typed_value tval) {
+static void install(char *varName, enum type_enum targTyp) {
         struct symtab *p;
         char *id = getStack(&scopeStack);
 
         strcat(id, varName);
 
         p = &symbols[nsyms++];
+        p->typ = targTyp;
         strncpy(p->id, id, MAXTOKEN);
-
-        if (targTyp == I64 && tval.typ == F64) {
-                p->tval.typ = I64;
-                p->tval.val.ival = tval.val.fval;
-        }else if (targTyp == F64 && tval.typ == I64 ) {
-                p->tval.typ = F64;
-                p->tval.val.fval = tval.val.ival;
-        }else {
-                p->tval = tval;
-        }
 }
 
-void assign(char *varName, enum type_enum targTyp, struct typed_value tval) {
+void assign(char *varName, enum type_enum targTyp) {
         struct symtab *p;
 
         p = lookup(varName);
         if(p == NULL){
-                install(varName, targTyp, tval);
-        }else {
-                if (targTyp == I64 && tval.typ == F64 ) {
-                        p->tval.val.ival = tval.val.fval;
-                }else if (targTyp == F64 == 0 && tval.typ == I64 ) {
-                        p->tval.val.fval = tval.val.ival;
-                }else {
-                        p->tval = tval;
-                }
+                install(varName, targTyp);
         }
 }
 
