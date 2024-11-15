@@ -75,21 +75,22 @@ type    : T_I64
         | T_F64
         ;
 
-conditional_statement   : IF '(' expr ')' '{' statement_list '}' else_statement_list
+conditional_statement   : IF expr '{' statement_list '}' else_statement_list
                         ;
 
 else_statement_list     : /*epsilon*/ 
-                        | ELSE IF '(' expr ')' '{' statement_list '}' else_statement_list
+                        | ELSE IF expr '{' statement_list '}' else_statement_list
                         | single_else_statement
                         ;
 
 single_else_statement   : ELSE '{' statement_list '}'
                         ;
 
-loop_statement          : WHILE '(' expr ')' '{' statement_list '}'
+loop_statement          : WHILE expr '{' statement_list '}'
                         ;
 
-expr            : expr '+' expr
+expr            : '(' expr ')'
+                | expr '+' expr
                 | expr '-' expr
                 | expr '*' expr
                 | expr '/' expr
