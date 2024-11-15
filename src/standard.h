@@ -48,15 +48,19 @@ void assign(char *varName, enum type_enum targTyp) {
         }
 }
 
+char* typeToString(enum type_enum typ) {
+    switch (typ) {
+        case I64: return "I64";
+        case F64: return "F64";
+        default: return "ERROR: UNKNOWN TYPE.\n";
+    }
+}
+
 void printfSymbolTable() {
     struct symtab *p;
 
     for (int i = 0; i < nsyms; i++) {
             p = &symbols[i];
-            if (p->typ == I64){
-                printf("%s [I64]\n", p->id);
-            }else {
-                printf("%s [F64]\n", p->id);
-            }
+            printf("%s [%s]\n", p->id ,typeToString(p->typ));
     }
 }
