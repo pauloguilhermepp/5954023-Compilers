@@ -40,16 +40,16 @@ function_list   : function
 function        : FN function_declaration '{' statement_list RETURN expr ';' '}' { pop(&scopeStack); }
                 ;
 
-function_declaration    : MAIN '(' ')'                                  { push(&scopeStack, $1); }
-                        | IDENTIFIER '(' function_attributes ')'        { push(&scopeStack, $1); }
+function_declaration    : MAIN '(' ')'  { push(&scopeStack, $1); }
+                        | IDENTIFIER    { push(&scopeStack, $1); }      '(' function_attributes ')'
                         ;
 
 function_attributes     : /*epsilon*/ 
                         | identifier_list
                         ;
 
-identifier_list         : IDENTIFIER type                       { struct symtab *p; assign($1, $2); }
-                        | IDENTIFIER type ',' identifier_list   { struct symtab *p; assign($1, $2); }
+identifier_list         : IDENTIFIER type                       { assign($1, $2); }
+                        | IDENTIFIER type ',' identifier_list   { assign($1, $2); }
                         ;
 
 statement_list  : statement
