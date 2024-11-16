@@ -52,7 +52,7 @@ identifier_list         : IDENTIFIER type                       { assign($1, $2)
                         | IDENTIFIER type ',' identifier_list   { assign($1, $2); }
                         ;
 
-statement_list  : statement
+statement_list  : /*epsilon*/ 
                 | statement  statement_list
                 ;
 
@@ -87,6 +87,7 @@ function_call           : IDENTIFIER '(' parameters_list ')' ';'
                         ;
 
 conditional_statement   : IF expr '{' statement_list '}' else_statement_list
+                        | IF expr '{' statement_list RETURN expr ';' '}' else_statement_list
                         ;
 
 parameters_list         : /*epsilon*/ 
@@ -99,13 +100,16 @@ expression_list         : expr
 
 else_statement_list     : /*epsilon*/ 
                         | ELSE IF expr '{' statement_list '}' else_statement_list
+                        | ELSE IF expr '{' statement_list RETURN expr ';' '}' else_statement_list
                         | single_else_statement
                         ;
 
 single_else_statement   : ELSE '{' statement_list '}'
+                        | ELSE '{' statement_list RETURN expr ';' '}'
                         ;
 
 loop_statement          : WHILE expr '{' statement_list '}'
+                        | WHILE expr '{' statement_list RETURN expr ';' '}'
                         ;
 
 expr            : '(' expr ')'

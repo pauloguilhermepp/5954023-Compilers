@@ -25,8 +25,8 @@ extern int yyerror (char const *msg, ...);
 "<="                      { return LE; }
 "//".*                    { ; /* Ignore */ }
 ["',:;=+*/%<>(){}!-]      { return yytext[0]; }
-[0-9]+                    { return INT_LITERAL; }
-[0-9]+"."[0-9]*           { return FLOAT_LITERAL; }
+[+-]?[0-9]+                    { return INT_LITERAL; }
+[+-]?[0-9]+"."[0-9]*           { return FLOAT_LITERAL; }
 [a-zA-Z][a-zA-Z0-9_]*     { yylval.sval = strdup(yytext); return IDENTIFIER; }
 [ \t\r\n]                 { ; /* ignore */ }
 .                         { yyerror("Unknown token %s\n", yytext); }
