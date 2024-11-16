@@ -4,6 +4,7 @@ fn main() {
            f : i64 = 0;
         
         i = i + 1;
+        i++;
     
 
         return 0;

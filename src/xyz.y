@@ -63,6 +63,8 @@ statement       : attribution
                 ;
 
 attribution     : IDENTIFIER '=' expr ';'
+                | IDENTIFIER '+' '+' ';'
+                | IDENTIFIER '-' '-' ';'
                 ;
 
 assignment_list : VAR variable_assignment_list
