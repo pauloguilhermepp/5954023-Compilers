@@ -28,28 +28,28 @@ struct symtab *lookup(char *varName) {
         return NULL;
 }
 
-static void install(char *varName, enum type_enum targTyp) {
+static void install(char *varName, enum type_enum targType) {
         struct symtab *p;
         char *id = getStack(&scopeStack);
 
         strcat(id, varName);
 
         p = &symbols[nsyms++];
-        p->typ = targTyp;
+        p->type = targType;
         strncpy(p->id, id, MAXTOKEN);
 }
 
-void assign(char *varName, enum type_enum targTyp) {
+void assign(char *varName, enum type_enum targType) {
         struct symtab *p;
 
         p = lookup(varName);
         if(p == NULL){
-                install(varName, targTyp);
+                install(varName, targType);
         }
 }
 
-char* typeToString(enum type_enum typ) {
-    switch (typ) {
+char* typeToString(enum type_enum type) {
+    switch (type) {
         case I64: return "I64";
         case F64: return "F64";
         default: return "ERROR: UNKNOWN TYPE.\n";
@@ -61,6 +61,6 @@ void printfSymbolTable() {
 
     for (int i = 0; i < nsyms; i++) {
             p = &symbols[i];
-            printf("%s [%s]\n", p->id ,typeToString(p->typ));
+            printf("%s [%s]\n", p->id ,typeToString(p->type));
     }
 }

@@ -3,7 +3,7 @@
 %}
 
 %union {
-        enum type_enum typ;
+        enum type_enum type;
         char *sval;
 }
 
@@ -14,10 +14,10 @@
 %token AND OR EQ NE GE LE
 %token INT_LITERAL
 %token FLOAT_LITERAL
-%token <typ> T_I64 T_F64
+%token <type> T_I64 T_F64
 %token <sval> MAIN IDENTIFIER
 
-%type  <typ> type
+%type  <type> type
 
 %left OR
 %left AND

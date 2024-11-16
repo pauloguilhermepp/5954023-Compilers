@@ -12,7 +12,7 @@ enum type_enum {
 
 struct symtab {
         char id[MAXTOKEN];
-        enum type_enum typ;
+        enum type_enum type;
 };
 
 Stack scopeStack = {.top = -1};
