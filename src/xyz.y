@@ -58,6 +58,7 @@ statement_list  : statement
 
 statement       : attribution
                 | assignment_list
+                | function_call
                 | conditional_statement
                 | loop_statement
                 ;
@@ -81,7 +82,19 @@ type    : T_I64
         | T_F64
         ;
 
+function_call           : IDENTIFIER '(' parameters_list ')' ';'
+                        | IDENTIFIER '=' IDENTIFIER '(' parameters_list ')' ';'
+                        ;
+
 conditional_statement   : IF expr '{' statement_list '}' else_statement_list
+                        ;
+
+parameters_list         : /*epsilon*/ 
+                        | expression_list
+                        ;
+
+expression_list         : expr
+                        | expr ',' expression_list
                         ;
 
 else_statement_list     : /*epsilon*/ 
