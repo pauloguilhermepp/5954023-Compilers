@@ -56,9 +56,13 @@ statement_list  : statement
                 | statement  statement_list
                 ;
 
-statement       : assignment_list
+statement       : attribution
+                | assignment_list
                 | conditional_statement
                 | loop_statement
+                ;
+
+attribution     : IDENTIFIER '=' expr ';'
                 ;
 
 assignment_list : VAR variable_assignment_list
