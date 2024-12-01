@@ -64,9 +64,9 @@ statement       : attribution
                 | loop_statement
                 ;
 
-attribution     : IDENTIFIER '=' expr ';'
-                | IDENTIFIER '+' '+' ';'
-                | IDENTIFIER '-' '-' ';'
+attribution     : IDENTIFIER '=' expr ';' { checkExistence($1); }
+                | IDENTIFIER '+' '+' ';'  { checkExistence($1); }
+                | IDENTIFIER '-' '-' ';'  { checkExistence($1); }
                 ;
 
 assignment_list : VAR variable_assignment_list

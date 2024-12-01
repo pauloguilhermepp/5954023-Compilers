@@ -1,0 +1,6 @@
+fn main() {
+        var i : i64 = 1;
+        j = 2;
+        
+        return 0;
+}

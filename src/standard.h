@@ -39,6 +39,16 @@ static void install(char *varName, enum type_enum targType) {
         strncpy(p->id, id, MAXTOKEN);
 }
 
+void checkExistence(char *varName) {
+        struct symtab *p;
+
+        p = lookup(varName);
+        if(p == NULL){
+                printf("WARNING: Variable \"%s\" was not declared.\n", varName);
+                printf("Symbol Table will be composed only of declared variables.\n\n");
+        }
+}
+
 void assign(char *varName, enum type_enum targType) {
         struct symtab *p;
 
