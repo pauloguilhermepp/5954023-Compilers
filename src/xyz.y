@@ -25,6 +25,7 @@
 %nonassoc '<' '>' GE LE
 %left '+' '-'
 %left '*' '/'
+%left '!'
 %right '='
 
 %start program
@@ -125,6 +126,8 @@ expr            : '(' expr ')'
                 | expr LE  expr
                 | expr '>' expr
                 | expr '<' expr
+                | '!' expr
+                | '-' expr
                 | INT_LITERAL
                 | FLOAT_LITERAL
                 | IDENTIFIER
