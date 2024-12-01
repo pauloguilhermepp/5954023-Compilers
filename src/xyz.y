@@ -24,7 +24,7 @@
 %nonassoc EQ NE
 %nonassoc '<' '>' GE LE
 %left '+' '-'
-%left '*' '/'
+%left '*' '/' '%'
 %left '!'
 %right '='
 
@@ -118,6 +118,7 @@ expr            : '(' expr ')'
                 | expr '-' expr
                 | expr '*' expr
                 | expr '/' expr
+                | expr '%' expr
                 | expr AND expr
                 | expr OR  expr
                 | expr EQ  expr
