@@ -13,3 +13,5 @@ bison -d -o src/xyz.tab.c src/xyz.y
 gcc -o src/xyz src/xyz.tab.c
 
 ./src/xyz ${INPUT_FILE_PATH}
+
+rm src/xyz src/xyz.yy.c src/xyz.tab.*
