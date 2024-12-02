@@ -1,0 +1,4 @@
+WARNING: Variable "j" was not declared.
+Symbol Table will be composed only of declared variables.
+
+main.i [I64]

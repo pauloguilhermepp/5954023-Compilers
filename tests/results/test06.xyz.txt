@@ -1,0 +1,3 @@
+main.x1 [I64]
+main.x2 [F64]
+main.x3 [I64]
