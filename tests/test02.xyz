@@ -1,6 +1,0 @@
-fn main() {
-        var i : i64 = 1;
-        var j : f64 = 2.0;
-        
-        return 0;
-}

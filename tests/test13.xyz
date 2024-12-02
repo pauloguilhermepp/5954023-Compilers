@@ -1,9 +1,0 @@
-fn main() {
-        var 
-           i : i64 = 3,
-           f : i64 = 0;
-    
-        f = func(1, 2, 3);
-
-        return 0;
-}
