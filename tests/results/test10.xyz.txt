@@ -1,3 +1,3 @@
-simpleFunc.x [I64]
-main.x [I64]
-main.y [I64]
+simpleFunc.x [i64]
+main.x [i64]
+main.y [i64]

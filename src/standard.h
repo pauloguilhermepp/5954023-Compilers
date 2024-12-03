@@ -60,8 +60,8 @@ void assign(char *varName, enum type_enum targType) {
 
 char* typeToString(enum type_enum type) {
     switch (type) {
-        case I64: return "I64";
-        case F64: return "F64";
+        case I64: return "i64";
+        case F64: return "f64";
         default: return "ERROR: UNKNOWN TYPE.\n";
     }
 }

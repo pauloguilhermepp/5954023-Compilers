@@ -1,1 +1,1 @@
-main.i [I64]
+main.i [i64]

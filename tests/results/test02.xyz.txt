@@ -1,2 +1,2 @@
-main.i [I64]
-main.j [F64]
+main.i [i64]
+main.j [f64]
