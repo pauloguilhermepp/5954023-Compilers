@@ -13,7 +13,7 @@ int yyerror(const char *msg, ...) {
 	exit(EXIT_FAILURE);
 }
 
-struct symtab *lookup(char *varName) {
+struct symtab *searchVariable(char *varName) {
         char *id = getStack(&scopeStack);
         struct symtab *p;
 
@@ -28,7 +28,7 @@ struct symtab *lookup(char *varName) {
         return NULL;
 }
 
-static void install(char *varName, enum type_enum targType) {
+static void addVariable(char *varName, enum type_enum targType) {
         struct symtab *p;
         char *id = getStack(&scopeStack);
 
@@ -42,19 +42,19 @@ static void install(char *varName, enum type_enum targType) {
 void checkExistence(char *varName) {
         struct symtab *p;
 
-        p = lookup(varName);
+        p = searchVariable(varName);
         if(p == NULL){
                 printf("WARNING: Variable \"%s\" was not declared.\n", varName);
                 printf("Symbol Table will be composed only of declared variables.\n\n");
         }
 }
 
-void assign(char *varName, enum type_enum targType) {
+void safeAddVariable(char *varName, enum type_enum targType) {
         struct symtab *p;
 
-        p = lookup(varName);
+        p = searchVariable(varName);
         if(p == NULL){
-                install(varName, targType);
+                addVariable(varName, targType);
         }
 }
 

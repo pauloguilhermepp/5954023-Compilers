@@ -49,8 +49,8 @@ function_attributes     : /*epsilon*/
                         | identifier_list
                         ;
 
-identifier_list         : IDENTIFIER type                       { assign($1, $2); }
-                        | IDENTIFIER type ',' identifier_list   { assign($1, $2); }
+identifier_list         : IDENTIFIER type                       { safeAddVariable($1, $2); }
+                        | IDENTIFIER type ',' identifier_list   { safeAddVariable($1, $2); }
                         ;
 
 statement_list  : /*epsilon*/ 
@@ -76,7 +76,7 @@ variable_assignment_list        : assignment ';'
                                 | assignment ',' variable_assignment_list
                                 ;
 
-assignment      : IDENTIFIER ':' type '=' expr         { assign($1, $3); }
+assignment      : IDENTIFIER ':' type '=' expr         { safeAddVariable($1, $3); }
                 ;
 
 type    : T_I64
