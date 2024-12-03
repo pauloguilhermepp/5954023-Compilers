@@ -1,3 +1,7 @@
+fn func(a i64, b i64, c i64) {
+        return a + b + c; 
+}
+
 fn main() {
         var 
            i : i64 = 3,
