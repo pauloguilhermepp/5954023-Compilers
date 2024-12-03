@@ -15,6 +15,8 @@ root/
 
 ├── main.sh: Simple bash script to execute the project.
 |
+├── test.sh: Script used to execute all tests.
+|
 ├── ProjectDescription.pdf: Project description.
 |
 ├── src
@@ -30,8 +32,46 @@ root/
 |   ├── xyz.y: Syntax analyzer.
 |
 |   ├── tests: Set of tests developed to validate the tool.
+|
+├── tests
+|
+|   ├── results: Expected results of the tests.
+|
+|   ├── scripts: Set of xyz files to test the tool.
 ```
 
 ## Running the Project
 In a Linux environment, you can execute the tool by running:
-```bash main.sh <input_file_path>```
+
+```
+bash main.sh <input_file_path>
+```
+
+It is also possible to execute all tests presented here by running:
+
+```
+bash tests.sh
+```
+
+## Observations
+Considering the exercises given in the pdf file:
+
+**1.** Lexical analyzer is presented at *src/xyz.l*.
+
+**2.** Syntax analyzer is presented at *src/xyz.y*.
+
+**3.** Symbol table is properly displayed and can be checked to the *fat.xyz* example by running:
+
+```
+bash main.sh tests/scripts/fat.xyz
+```
+with a return equal to the expected:
+```
+fatorial.n [i64]
+fatorial.i [i64]
+fatorial.r [i64]
+main.i [i64]
+main.f [i64]
+```
+
+**4.** To detect if a variable already was declared when its value is used, we make a search in the Symbol Table for a variable with the same name and scope of the variable that we are currently using. If we find a match, we know that this variable was properly declared. If this is not the case, it means that it was not declared.
