@@ -74,4 +74,4 @@ main.i [i64]
 main.f [i64]
 ```
 
-**4.** To detect if a variable already was declared when its value is used, we make a search in the Symbol Table for a variable with the same name and scope of the variable that we are currently using. If we find a match, we know that this variable was properly declared. If this is not the case, it means that it was not declared.
+**4.** To detect if a variable already was declared when its value is used, we first define a policy of adding all declared variables in the Symbol Table (naturally). Then, when a variable is used in the code, we make a search in the Symbol Table for a variable with the same name and scope of the variable that we are currently using. If we find a match, we know that this variable was properly declared. If this is not the case, it means that it was not declared.
